@@ -1,0 +1,64 @@
+package suiteExample;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+public class Activity7 {
+    WebDriver driver;
+    WebDriverWait wait;
+
+    @BeforeClass
+    public void beforeClass() {
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\001YD2744\\Downloads\\chromedriver_win32 (2)\\chromedriver.exe");
+        driver = new ChromeDriver();
+        wait = new WebDriverWait(driver, 10);
+
+        //Open browser
+        driver.get("https://www.training-support.net/selenium/login-form");
+    }
+
+    @DataProvider(name = "Authentication")
+    public static Object[][] credentials()
+    {
+        return new Object[][]
+                {
+                { "admin", "password" }};
+    }
+
+    @Test(dataProvider = "Authentication")
+    public void loginTestCase(String username, String password) throws InterruptedException {
+        //Find username and pasword fields
+        WebElement usernameField = driver.findElement(By.id("username"));
+        WebElement passwordField = driver.findElement(By.id("password"));
+
+        //Enter values
+        usernameField.sendKeys(username);
+        System.out.println("entered userName");
+        Thread.sleep(1000);
+        passwordField.sendKeys(password);
+        System.out.println("entered Password ");
+
+
+        //Click Log in
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
+
+        //Assert Message
+        String loginMessage = driver.findElement(By.id("action-confirmation")).getText();
+        Assert.assertEquals(loginMessage, "Welcome Back, admin");
+    }
+
+    @AfterClass
+    public void afterClass() {
+        //Close browser
+        driver.close();
+    }
+
+}
